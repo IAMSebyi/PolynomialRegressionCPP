@@ -8,7 +8,7 @@ int main() {
 	std::ofstream outputParameters("parameters.txt");
 
 	int numOfFeatures, numOfDataPoints, order, maxIterations = -1;
-	float learningRate;
+	float learningRate, regularizationParam = 0;
 
 	// Read number of features and data points
 	inputData >> numOfFeatures >> numOfDataPoints >> order;
@@ -26,10 +26,10 @@ int main() {
 	}
 
 	// Read learning rate and max iterations
-	inputData >> learningRate >> maxIterations;
+	inputData >> learningRate >> maxIterations >> regularizationParam;
 
 	// Create PolynomialRegression model
-	PolynomialRegression model(features, targets, numOfFeatures, numOfDataPoints, order);
+	PolynomialRegression model(features, targets, numOfFeatures, numOfDataPoints, order, regularizationParam);
 
 	// Train the model
 	if (maxIterations == -1) model.Train(learningRate);
@@ -64,7 +64,7 @@ int main() {
 				std::cout << testFeature[j] << " ";
 			}
 
-			std::cout << "}: " << model.Predict(testFeature, true) << '\n';
+			std::cout << "}: " << model.Predict(testFeature) << '\n';
 		}
 	}
 

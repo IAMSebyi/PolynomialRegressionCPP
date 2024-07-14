@@ -1,18 +1,14 @@
 #include "PolynomialRegression.h"
 
 // Constructor to initialize the PolynomialRegression object with features, targets, and dimensions
-PolynomialRegression::PolynomialRegression(const std::vector<std::vector<float>>& features, const std::vector<float>& targets, const int& numOfFeatures, const int& numOfDataPoints, const int& order)
-	: features(features), targets(targets), numOfFeatures(numOfFeatures), numOfDataPoints(numOfDataPoints), coefficients(order, std::vector<float>(numOfFeatures, 0)), intercept(0), order(order)
+PolynomialRegression::PolynomialRegression(const std::vector<std::vector<float>>& features, const std::vector<float>& targets, const int& numOfFeatures, const int& numOfDataPoints, const int& order, const float& regularizationParam)
+	: features(features), targets(targets), numOfFeatures(numOfFeatures), numOfDataPoints(numOfDataPoints), coefficients(order, std::vector<float>(numOfFeatures, 0)), intercept(0), order(order), regularizationParam(regularizationParam)
 {
 }
 
 // Predict the target value for a given input vector
-float PolynomialRegression::Predict(std::vector<float> input, const bool test) const
+float PolynomialRegression::Predict(std::vector<float> input) const
 {
-	if (test) {
-
-	}
-
 	float result = intercept + GetVectorMultiplication(input, coefficients[0]);
 	for (int i = 2; i <= order; i++) {
 		std::vector<float> term = GetVectorExponentiation(input, i);
@@ -22,7 +18,7 @@ float PolynomialRegression::Predict(std::vector<float> input, const bool test) c
 	return result;
 }
 
-// Calculate the squared error cost function
+// Calculate the squared error cost function with L2 regularization
 float PolynomialRegression::Cost() const
 {
 	float result = 0;
@@ -30,6 +26,10 @@ float PolynomialRegression::Cost() const
 	for (int i = 0; i < numOfDataPoints; i++) {
 		float error = Predict(features[i]) - targets[i];
 		result += error * error;
+	}
+
+	for (int i = 0; i < order; i++) {
+		result += regularizationParam * GetVectorMultiplication(coefficients[i], coefficients[i]);
 	}
 
 	result /= 2 * numOfDataPoints;
@@ -46,6 +46,7 @@ std::vector<float> PolynomialRegression::CoeffGradient(const int& order) const
 		for (int j = 0; j < numOfDataPoints; j++) {
 			result[i] += (Predict(features[j]) - targets[j]) * std::pow(features[j][i], order);
 		}
+		result[i] += regularizationParam * coefficients[order - 1][i];
 		result[i] /= numOfDataPoints;
 	}
 

@@ -8,10 +8,10 @@ class PolynomialRegression
 {
 public:
 	// Constructor
-	PolynomialRegression(const std::vector<std::vector<float>>& features, const std::vector<float>& targets, const int& numOfFeatures, const int& numOfDataPoints, const int& order);
+	PolynomialRegression(const std::vector<std::vector<float>>& features, const std::vector<float>& targets, const int& numOfFeatures, const int& numOfDataPoints, const int& order, const float& regularizationParam);
 
 	// Methods
-	float Predict(std::vector<float> input, const bool test = false) const;
+	float Predict(std::vector<float> input) const;
 	void Train(const float& learningRate, const int maxIterations = 40000);
 	std::vector<std::vector<float>> GetParameters() const;
 
@@ -36,5 +36,6 @@ private:
 	int order;
 	int numOfFeatures;
 	int numOfDataPoints;
+	float regularizationParam;
 };
 
